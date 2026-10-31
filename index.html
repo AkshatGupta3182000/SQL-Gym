@@ -233,12 +233,30 @@ function renderList() {
  document.querySelectorAll(".q-item").forEach(b=>b.addEventListener("click",()=>loadQuestion(Number(b.dataset.index))));
  const n=completed.size; $("solvedCount").textContent=`${n}/${questions.length}`; $("progressLabel").textContent=Math.round(n/questions.length*100)+"%"; $("progressFill").style.width=(n/questions.length*100)+"%";
 }
+
 function loadQuestion(i) {
- current=i; const q=questions[i];
- $("topicPill").textContent=q.topic; $("levelPill").textContent=q.level; $("questionNumber").textContent=`QUESTION ${String(i+1).padStart(2,'0')} / ${String(questions.length).padStart(2,'0')}`;
- $("questionTitle").textContent=q.title; $("questionDescription").textContent=q.desc; $("sqlEditor").value=q.starter;
- $("resultStatus").textContent="Waiting for your query"; $("resultArea").className="empty-result"; $("resultArea").innerHTML="Your results will appear here.<br>Write a query above and select <strong>Run query</strong>."; $("feedbackArea").innerHTML=""; $("solutionArea").innerHTML=""; renderList();
+ current = i;
+ const q = questions[i];
+
+ $("topicPill").textContent = q.topic;
+ $("levelPill").textContent = q.level;
+ $("questionNumber").textContent = `QUESTION ${String(i+1).padStart(2,'0')} / ${String(questions.length).padStart(2,'0')}`;
+
+ $("questionTitle").textContent = q.title;
+ $("questionDescription").textContent = q.desc;
+
+ // Start with a neutral editor instead of revealing the answer.
+ $("sqlEditor").value = "-- Write your SQL query here\n-- Read the question above and use the available tables.";
+
+ $("resultStatus").textContent = "Waiting for your query";
+ $("resultArea").className = "empty-result";
+ $("resultArea").innerHTML = "Your results will appear here.<br>Write a query above and select <strong>Run query</strong>.";
+ $("feedbackArea").innerHTML = "";
+ $("solutionArea").innerHTML = "";
+
+ renderList();
 }
+```
 function splitComma(s) { let out=[], start=0, quote=false, depth=0; for(let i=0;i<s.length;i++){if(s[i]==="'")quote=!quote; if(!quote){if(s[i]==="(")depth++;if(s[i]===")")depth--;if(s[i]===","&&depth===0){out.push(s.slice(start,i).trim());start=i+1;}}}out.push(s.slice(start).trim());return out; }
 function valFor(row, raw) { const v=raw.trim(); if(/^'.*'$/.test(v))return v.slice(1,-1).replace(/''/g,"'"); if(/^null$/i.test(v))return null; if(/^\d+(\.\d+)?$/.test(v))return Number(v); if(v in row)return row[v]; const last=v.split(".").pop(); if(last in row)return row[last]; throw Error("Unknown column: "+v); }
 function compare(a,op,b) { if(a===undefined)throw Error("Unknown column or value in condition."); if(op==="=")return String(a??"").toLowerCase()===String(b??"").toLowerCase(); if(op==="!="||op==="<>")return String(a??"").toLowerCase()!==String(b??"").toLowerCase(); if(a==null||b==null)return false; if(op===">")return a>b;if(op==="<")return a<b;if(op===">=")return a>=b;if(op==="<=")return a<=b;throw Error("Unsupported comparison operator: "+op); }
