@@ -236,7 +236,7 @@ function renderList() {
 function loadQuestion(i) {
  current=i; const q=questions[i];
  $("topicPill").textContent=q.topic; $("levelPill").textContent=q.level; $("questionNumber").textContent=`QUESTION ${String(i+1).padStart(2,'0')} / ${String(questions.length).padStart(2,'0')}`;
- $("questionTitle").textContent=q.title; $("questionDescription").textContent=q.desc; $("sqlEditor").value=q.starter;
+ $("questionTitle").textContent=q.title; $("questionDescription").textContent=q.desc; $("sqlEditor").value="-- Write your SQL query here\n-- Use the question and employees table above to build your answer.";
  $("resultStatus").textContent="Waiting for your query"; $("resultArea").className="empty-result"; $("resultArea").innerHTML="Your results will appear here.<br>Write a query above and select <strong>Run query</strong>."; $("feedbackArea").innerHTML=""; $("solutionArea").innerHTML=""; renderList();
 }
 function splitComma(s) { let out=[], start=0, quote=false, depth=0; for(let i=0;i<s.length;i++){if(s[i]==="'")quote=!quote; if(!quote){if(s[i]==="(")depth++;if(s[i]===")")depth--;if(s[i]===","&&depth===0){out.push(s.slice(start,i).trim());start=i+1;}}}out.push(s.slice(start).trim());return out; }
@@ -303,7 +303,7 @@ async function initializeSqlEngine() {
  }
 }
 $("runBtn").addEventListener("click",runQuery);
-$("resetBtn").addEventListener("click",()=>{$("sqlEditor").value=questions[current].starter;$("feedbackArea").innerHTML="";$("solutionArea").innerHTML="";$("resultArea").className="empty-result";$("resultArea").innerHTML="Your results will appear here.<br>Write a query above and select <strong>Run query</strong>.";$("resultStatus").textContent="Waiting for your query";});
+$("resetBtn").addEventListener("click",()=>{$("sqlEditor").value="-- Write your SQL query here\n-- Use the question and employees table above to build your answer.";$("feedbackArea").innerHTML="";$("solutionArea").innerHTML="";$("resultArea").className="empty-result";$("resultArea").innerHTML="Your results will appear here.<br>Write a query above and select <strong>Run query</strong>.";$("resultStatus").textContent="Waiting for your query";});
 $("hintBtn").addEventListener("click",()=>{$("feedbackArea").innerHTML=`<div class="feedback good"><strong>Hint</strong><br>${esc(questions[current].hint)}</div>`;});
 $("sqlEditor").addEventListener("keydown",e=>{if(e.key==="Tab"){e.preventDefault();const t=e.target,s=t.selectionStart,en=t.selectionEnd;t.value=t.value.substring(0,s)+"  "+t.value.substring(en);t.selectionStart=t.selectionEnd=s+2;}});
 renderSchema();renderList();loadQuestion(0);initializeSqlEngine();
